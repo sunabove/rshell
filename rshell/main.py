@@ -1513,9 +1513,11 @@ class Device(object):
             QUIET or print('Y' if unhexlify_exists else 'N')
             if not unhexlify_exists:
                 raise ShellError('rshell needs MicroPython firmware with ubinascii.unhexlify')
-        QUIET or print('Retrieving root directories ... ', end='', flush=True)
+        
+        # QUIET or print('Retrieving root directories ... ', end='', flush=True)
         self.root_dirs = ['/{}/'.format(dir) for dir in self.remote_eval(listdir, '/')]
-        QUIET or print(' '.join(self.root_dirs))
+        # QUIET or print(' '.join(self.root_dirs))
+        
         QUIET or print('Setting time ... ', end='', flush=True)
         now = self.sync_time()
         QUIET or print(time.strftime('%b %d, %Y %H:%M:%S', now))
