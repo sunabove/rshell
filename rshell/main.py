@@ -2849,6 +2849,8 @@ def real_main():
         default_baud = int(os.getenv('RSHELL_BAUD'))
     except:
         default_baud = 115200
+    pass
+
     default_port = os.getenv('RSHELL_PORT')
     default_rts = os.getenv('RSHELL_RTS') or RTS
     default_dtr = os.getenv('RSHELL_DTR') or DTR
@@ -2857,11 +2859,14 @@ def real_main():
     default_editor = os.getenv('RSHELL_EDITOR') or os.getenv('VISUAL') or os.getenv('EDITOR') or 'vi'
     default_color = sys.stdout.isatty()
     default_nocolor = not default_color
+    
     global BUFFER_SIZE
     try:
         default_buffer_size = int(os.getenv('RSHELL_BUFFER_SIZE'))
     except:
         default_buffer_size = BUFFER_SIZE
+    pass
+
     parser = argparse.ArgumentParser(
         prog="rshell",
         usage="%(prog)s [options] [command]",
@@ -2869,6 +2874,7 @@ def real_main():
         epilog=("You can specify the default serial port using the " +
                 "RSHELL_PORT environment variable.")
     )
+    
     parser.add_argument(
         "-b", "--baud",
         dest="baud",
@@ -2989,10 +2995,12 @@ def real_main():
         nargs=argparse.REMAINDER,
         help="Optional command to execute"
     )
+    
     args = parser.parse_args(sys.argv[1:])
 
     if args.buffer_size is not None:
         BUFFER_SIZE = args.buffer_size
+    pass
 
     if args.debug:
         print("Debug = %s" % args.debug)
@@ -3008,6 +3016,7 @@ def real_main():
         print("Quiet = %d" % args.quiet)
         print("BUFFER_SIZE = %d" % BUFFER_SIZE)
         print("Cmd = [%s]" % ', '.join(args.cmd))
+    pass
 
     if args.version:
         print(__version__)
