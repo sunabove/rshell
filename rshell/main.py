@@ -1502,6 +1502,7 @@ class Device(object):
         self.sysname = ''
         QUIET or print('Retrieving sysname ... ', end='', flush=True)
         self.sysname = self.remote_eval(sysname)
+        
         QUIET or print(self.sysname)
         if not ASCII_XFER:
             QUIET or print('Testing if sys.stdin.buffer exists ... ', end='', flush=True)
@@ -1513,7 +1514,8 @@ class Device(object):
             QUIET or print('Y' if unhexlify_exists else 'N')
             if not unhexlify_exists:
                 raise ShellError('rshell needs MicroPython firmware with ubinascii.unhexlify')
-        
+        pass
+    
         # QUIET or print('Retrieving root directories ... ', end='', flush=True)
         self.root_dirs = ['/{}/'.format(dir) for dir in self.remote_eval(listdir, '/')]
         # QUIET or print(' '.join(self.root_dirs))
@@ -1580,6 +1582,7 @@ class Device(object):
         """Calls func with the indicated args on the micropython board."""
         global HAS_BUFFER
         HAS_BUFFER = self.has_buffer
+        
         if hasattr(func, 'extra_funcs'):
           func_name = func.name
           func_lines = []
@@ -1591,8 +1594,10 @@ class Device(object):
         else:
           func_name = func.__name__
           func_src = inspect.getsource(func)
+          
         if self.sysname == 'rp2':
             func_src = func_src.replace('#rp2: ', '')
+            
         func_src = strip_source(func_src)
         args_arr = [remote_repr(i) for i in args]
         kwargs_arr = ["{}={}".format(k, remote_repr(v)) for k, v in kwargs.items()]
@@ -1604,17 +1609,21 @@ class Device(object):
         func_src += 'else:\n'
         func_src += '    print(output)\n'
         time_offset = self.time_offset
+        
         if self.adjust_for_timezone:
           time_offset -= time.localtime().tm_gmtoff
+          
         func_src = func_src.replace('TIME_OFFSET', '{}'.format(time_offset))
         func_src = func_src.replace('HAS_BUFFER', '{}'.format(HAS_BUFFER))
         func_src = func_src.replace('BUFFER_SIZE', '{}'.format(BUFFER_SIZE))
         func_src = func_src.replace('IS_UPY', 'True')
+        
         if DEBUG:
             print('----- About to send %d bytes of code to the pyboard -----' % len(func_src))
             print(func_src)
             print('-----')
         self.check_pyb()
+        
         try:
             self.pyb.enter_raw_repl()
             self.check_pyb()
